@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Start Page</title>
+</head>
+<body>
+    <h1>Start Page</h1>
+    <button onclick="uploadImage()">Select Image</button>
+    <div id="imgContainer"></div>
+    <button onclick="nextPage()">Next</button>
+
+    <script>
+        function uploadImage() {
+            var input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.style.display = 'none';
+            document.body.appendChild(input);
+
+            input.onchange = function () {
+                var file = input.files[0];
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var img = document.createElement('img');
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        var MAX_SIZE = 300;
+                        var scale = Math.min(MAX_SIZE / img.width, MAX_SIZE / img.height);
+                        canvas.width = img.width * scale;
+                        canvas.height = img.height * scale;
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        var resizedImg = document.createElement('img');
+                        resizedImg.src = canvas.toDataURL('image/jpeg');
+                        resizedImg.style.maxWidth = '300px';
+                        resizedImg.style.maxHeight = '300px';
+                        var container = document.getElementById('imgContainer');
+                        container.innerHTML = '';
+                        container.appendChild(resizedImg);
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            };
+
+            input.click();
+        }
+
+        function nextPage() {
+            // You can add logic here to navigate to the next page
+            // For example, redirecting to another URL or triggering a Flask route
+            window.location.href = '/page_one';
+        }
+    </script>
+</body>
+</html>
